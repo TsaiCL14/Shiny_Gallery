@@ -7,11 +7,9 @@ source('function/TV_choose_plotly.R')
 
 
 ###### 準備資料  ########
-get_data <- 
+
 z <- readr::read_csv('data/Final_report_data.csv',show_col_types = F)
 remove_z <- readr::read_csv(file = 'data/Final_report_remove.csv',show_col_types = F)
-# unique(z$客戶編號) %>% length()
-
 z <- z %>% 
   filter(!客戶編號 %in% unique(remove_z$mac)) %>% 
   filter(電視台 <= 412)
@@ -19,6 +17,11 @@ z <- z %>%
 TimeZ <- readr::read_csv('data/TimeSeries_06_UTC_remove_under412.csv',show_col_types = F)
 Seat <- which(TimeZ[,-1] > 300,arr.ind = T)
 Problem_names <- names(TimeZ)[-1][unique(Seat[,2])]
+
+tr_all <- read.transactions('data/market_basket_transactions.csv', format = 'basket', sep=',')
+tr_Rnews <- read.transactions('data/market_basket_transactions_remove_news.csv', format = 'basket', sep=',')
+tr_RnewsMovie <- read.transactions('data/market_basket_transactions_remove_news_movie.csv', format = 'basket', sep=',')
+
 ####### server output ##########
 
 # Program_Frequency 電視台排名及平均觀看時間
@@ -63,4 +66,21 @@ observeEvent(eventExpr = input$Choose_type,{
 # TimeSeries_TV_Choose
 output$TimeSeries_TV_Choose <- renderPlotly({
   TV_choose_plotly(z,Choose_TV = input$Choose_TV)
+})
+
+# Apriori_all
+output$Apriori_all <- renderDataTable({
+  apriori(tr_all, parameter = list(supp=0.01, conf=0.5,maxlen=10,minlen=1)) %>%
+    inspect() %>% 
+    arrange(desc(support)) %>% 
+    DT::datatable(extensions = 'Scroller',
+                  # filter = 'top',
+                  options = list(lengthMenu = c(5,10,30),
+                                 pageLength = 50 ,
+                                 deferRender = TRUE,
+                                 scrollY = 450 ,
+                                 scroller = TRUE,
+                                 scrollX = TRUE ,
+                                 fixedColumns = TRUE
+                  ))
 })

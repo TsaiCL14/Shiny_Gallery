@@ -6,8 +6,6 @@ TV_choose_plotly <- function(z,Choose_TV){
     summarise(
       Freq = n()
     ) %>% 
-    # plot_ly( x = ~開始時間,y = ~Freq,
-    #          type = 'scatter', mode = 'lines') %>% 
     plot_ly( x = ~開始時間,type = 'histogram') %>%
     layout(
       title =paste0(Choose_TV),

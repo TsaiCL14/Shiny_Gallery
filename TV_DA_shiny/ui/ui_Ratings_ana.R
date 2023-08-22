@@ -15,7 +15,7 @@ fluidPage(
          div(style = 'display: inline-block;vertical-align:top;text-align:left; width: 100%;',
              radioButtons('Choose_type',
                           '電視台排名_分類',
-                          c('未分類','去除新聞台')),
+                          c('未分類','去除新聞台','去除新聞台及電影')),
              selectInput('Choose_TV',
                          '挑選電視台',
                          c(1,2,3))
@@ -33,7 +33,16 @@ fluidPage(
                                         plotlyOutput('TimeSeries_Frequency')),
                                tabPanel('電視台選擇',
                                         plotlyOutput('TimeSeries_TV_Choose'))
-                           )# close navbarMenu 
+                           ),# close navbarMenu 
+                    navbarMenu('關聯分析',
+                               tabPanel('未分類',
+                                        DTOutput('Apriori_all')),
+                               tabPanel('去除新聞台',
+                                        DTOutput('Apriori_Remove_news')),
+                               tabPanel('去除新聞台及電影排',
+                                        DTOutput('Apriori_Remove_news_movie'))
+                      
+                    )# close navbarMenu
                     
                     
          )# navbarPage 

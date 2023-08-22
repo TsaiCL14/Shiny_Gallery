@@ -7,7 +7,9 @@ library(plotly)
 library(dplyr)
 library(tidyr)
 library(ggpubr) 
-library(plotly)
+library(DT)
+library(arules)
+library(plyr)
 ##################### Define UI for application that draws a histogram
 
 ui <- fluidPage(

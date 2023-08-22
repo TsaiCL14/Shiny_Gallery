@@ -3,8 +3,8 @@
  
 TV_rank_plot <- function(z,Choose){
   PlotData_Program <- z %>% 
-    group_by(電視台名稱,電視台) %>% 
-    summarise(
+    dplyr::group_by(電視台名稱,電視台) %>% 
+    dplyr::summarise(
       Freq = n(),
       Avg = mean(觀看時間)/60,
       .groups = 'drop'
@@ -17,6 +17,8 @@ TV_rank_plot <- function(z,Choose){
     PD <- PlotData_Program[c(1:20),]
   }else if(Choose == '去除新聞台'){
     PD <- PlotData_Program[!grepl('新聞|TVBS',PlotData_Program$電視台名稱),][1:20,]
+  }else if(Choose == '去除新聞台及電影'){
+    PD <- PlotData_Program[!grepl('新聞|TVBS|電影',PlotData_Program$電視台名稱),][1:20,]
   }
   # PD <- PlotData_Program[c(1:20),]
   # PD <- PlotData_Program[!grepl('新聞|TVBS',PlotData_Program$電視台名稱),][1:20,]
@@ -44,6 +46,7 @@ TV_rank_plot <- function(z,Choose){
     theme(legend.position = 'none',
           axis.title.y = element_blank(),
           axis.text.y = element_text(size = 15),
+          axis.text.x = element_text(size = 13),
           plot.margin = margin(t = 5, r = 20, b = 1, l = 5, unit = "pt"))
   
   # p2 <- PlotData_Program[c(1:20),] %>% 
@@ -71,6 +74,7 @@ TV_rank_plot <- function(z,Choose){
     theme(axis.title.y = element_blank(),
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank(),
+          axis.text.x = element_text(size = 13),
           plot.margin = margin(t = 5, r = 5, b = 1, l = 5, unit = "pt"))
   
   
