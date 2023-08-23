@@ -3,22 +3,26 @@
  
 TV_rank_plot <- function(z,Choose){
   PlotData_Program <- z %>% 
-    dplyr::group_by(電視台名稱,電視台) %>% 
+    # group_by(電視台名稱,電視台) %>% 
+    # summarise(
+    dplyr::group_by(電視台名稱,電視台) %>%
     dplyr::summarise(
-      Freq = n(),
+      Freq = dplyr::n_distinct(觀看時間),
       Avg = mean(觀看時間)/60,
       .groups = 'drop'
     ) %>% 
-    arrange(desc(Freq))
+    dplyr::arrange(desc(Freq))
   PlotData_Program$useName <- paste0(PlotData_Program$電視台名稱,'(',PlotData_Program$電視台,')')
   PlotData_Program$useName <- reorder(PlotData_Program$useName,PlotData_Program$Freq)
   ### choose
   if(Choose == '未分類'){
     PD <- PlotData_Program[c(1:20),]
   }else if(Choose == '去除新聞台'){
-    PD <- PlotData_Program[!grepl('新聞|TVBS',PlotData_Program$電視台名稱),][1:20,]
+    # PD <- PlotData_Program[!grepl('新聞|TVBS',PlotData_Program$電視台名稱),][1:20,]
+    PD <- PlotData_Program[!PlotData_Program$電視台 %in% c(49:58),][1:20,]
   }else if(Choose == '去除新聞台及電影'){
-    PD <- PlotData_Program[!grepl('新聞|TVBS|電影',PlotData_Program$電視台名稱),][1:20,]
+    # PD <- PlotData_Program[!grepl('新聞|TVBS|電影',PlotData_Program$電視台名稱),][1:20,]
+    PD <- PlotData_Program[!PlotData_Program$電視台 %in% c(49:58,61:69),][1:20,]
   }
   # PD <- PlotData_Program[c(1:20),]
   # PD <- PlotData_Program[!grepl('新聞|TVBS',PlotData_Program$電視台名稱),][1:20,]
@@ -46,7 +50,8 @@ TV_rank_plot <- function(z,Choose){
     theme(legend.position = 'none',
           axis.title.y = element_blank(),
           axis.text.y = element_text(size = 15),
-          axis.text.x = element_text(size = 13),
+          axis.text.x = element_text(size = 18),
+          plot.title = element_text(size = 20),
           plot.margin = margin(t = 5, r = 20, b = 1, l = 5, unit = "pt"))
   
   # p2 <- PlotData_Program[c(1:20),] %>% 
@@ -74,11 +79,12 @@ TV_rank_plot <- function(z,Choose){
     theme(axis.title.y = element_blank(),
           axis.text.y = element_blank(),
           axis.ticks.y = element_blank(),
-          axis.text.x = element_text(size = 13),
+          axis.text.x = element_text(size = 18),
+          plot.title = element_text(size = 20),
           plot.margin = margin(t = 5, r = 5, b = 1, l = 5, unit = "pt"))
   
   
-  p_output <- ggarrange(p1, p2,
+  p_output <- ggpubr::ggarrange(p1, p2,
                         ncol = 2,
                         widths = c(2.5,1))
   return(p_output)

@@ -11,16 +11,27 @@ TV_Frequency_plotly <- function(TimeZ){
     filter(druation > 0)
   
   p <- PlotData_over0 %>%
-    group_by(Date) %>% 
-    summarise(
-      Freq = n()
+    dplyr::group_by(Date) %>% 
+    dplyr::summarise(
+      Freq = dplyr::n_distinct(mac)
     ) %>% 
-    plot_ly( x = ~Date) %>% 
-    add_lines(y = ~Freq, name = "") %>% 
-    layout(
-      title = "TV Druation Freq",
+    plotly::plot_ly( x = ~Date) %>% 
+    plotly::add_lines(y = ~Freq, name = "") %>% 
+    plotly::layout(
+      title = list(text = '觀看次數時間數列圖', y = 0.98,
+                   font = list(size = 20, weight = 'bold', color = 'black')),
       xaxis = list(
+        title = '日期',
+        ticklen = 0,
+        gridwidth = 2,
         rangeslider = list(type = "date")
-      ))
+      ),
+      yaxis = list(title = '次數',
+                   ticklen = 0,
+                   gridwidth = 2,
+                   # gridcolor = 'rgb(255, 255, 255)',
+                   titlefont  = list(size = 18)),
+      paper_bgcolor = 'rgb(243, 243, 243)',
+      plot_bgcolor = 'rgb(243, 243, 243)')
   return(p)
 }
