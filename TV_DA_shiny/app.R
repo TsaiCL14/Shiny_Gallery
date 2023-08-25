@@ -6,9 +6,6 @@ library(DT)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
-# library(ggpubr) 
-# library(plotly)
-# library(arules)
 library(plyr)
 ##################### Define UI for application that draws a histogram
 

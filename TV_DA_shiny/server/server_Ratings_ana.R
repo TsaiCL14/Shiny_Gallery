@@ -2,7 +2,8 @@
 
 ##### use function ####
 source('function/TV_rank_plot.R')
-source('function/TV_Frequency_plotly.R')
+# source('function/TV_Frequency_plotly.R')
+source('function/TV_Frequency_Timeinterval_plotly.R')
 source('function/TV_choose_plotly.R')
 source('function/TV_bubble_plotly.R')
 
@@ -10,14 +11,15 @@ source('function/TV_bubble_plotly.R')
 ###### 準備資料  ########
 
 z <- readr::read_csv('data/Final_report_data.csv',show_col_types = F)
-remove_z <- readr::read_csv(file = 'data/Final_report_remove.csv',show_col_types = F)
-z <- z %>% 
-  filter(!客戶編號 %in% unique(remove_z$mac)) %>% 
-  filter(電視台 <= 412)
+# remove_z <- readr::read_csv(file = 'data/Final_report_remove.csv',show_col_types = F)
+# z <- z %>% 
+#   filter(!客戶編號 %in% unique(remove_z$mac)) %>% 
+#   filter(電視台 <= 412)
 
-TimeZ <- readr::read_csv('data/TimeSeries_06_UTC_remove_under412.csv',show_col_types = F)
-Seat <- which(TimeZ[,-1] > 300,arr.ind = T)
-Problem_names <- names(TimeZ)[-1][unique(Seat[,2])]
+# TimeZ <- readr::read_csv('data/Final_Report_Time.csv',show_col_types = F)
+# TimeZ <- readr::read_csv('data/TimeSeries_06_UTC_remove_under412.csv',show_col_types = F)
+# Seat <- which(TimeZ[,-1] > 300,arr.ind = T)
+# Problem_names <- names(TimeZ)[-1][unique(Seat[,2])]
 
 tr_all <- arules::read.transactions('data/market_basket_transactions.csv', format = 'basket', sep=',')
 tr_Rnews <- arules::read.transactions('data/market_basket_transactions_remove_news.csv', format = 'basket', sep=',')
@@ -31,13 +33,30 @@ output$Program_Frequency <- renderPlot({
 })
 
 # Program_scatter_bubble 電視台依 總時間/總觀看次數/平均觀看
-output$Program_scatter_bubble <- renderPlotly({
+output$Program_scatter_bubble <- plotly::renderPlotly({
   TV_bubble_plotly(z)
+  # # 設定 plotlyProxy 對象
+  # proxy <- plotly::plotlyProxy("bubble_plot")
+  # 
+  # # 註冊點擊事件
+  # plotly::event_register(proxy, 'plotly_click')
+  
 })
 
+# observeEvent(plotly::event_data("plotly_click", source = "bubble_plot"), {
+#   # 獲取點選的資料點數據
+#   # plotly::event_data()
+#   click_data <- plotly::event_data("plotly_click", source = "bubble_plot")
+#   # print(click_data)
+#   # 在這裡處理點選的資料，例如顯示在 Shiny 應用中或執行其他操作
+#   # 更新 bubble_text 文本，以顯示點選的資料
+#   plotly::updatePlotlyProxy(session, "bubble_plot", text = list(click_data$hovertext))
+# })
+
+
 # TimeSeries_Frequency
-output$TimeSeries_Frequency <- renderPlotly({
-  TV_Frequency_plotly(TimeZ)
+output$TimeSeries_Frequency <- plotly::renderPlotly({
+  TV_Frequency_TimeInterval_plotly(z)
 })
 
 # upload select input
@@ -76,58 +95,58 @@ observeEvent(eventExpr = input$Choose_type,{
 })
 
 # TimeSeries_TV_Choose
-output$TimeSeries_TV_Choose <- renderPlotly({
+output$TimeSeries_TV_Choose <- plotly::renderPlotly({
   TV_choose_plotly(z,Choose_TV = input$Choose_TV)
 })
 
 # Apriori_all
-output$Apriori_all <- renderDataTable({
-  arules::apriori(tr_all, parameter = list(supp=0.05, conf=0.7,maxlen=5,minlen=1)) %>%
-    arules::inspect() %>% 
-    arrange(desc(support)) %>% 
-    select(lhs,rhs,support,count) %>% 
-    mutate(support = round(support,4)) %>% 
-    DT::datatable(extensions = 'Scroller',
-                  options = list(lengthMenu = c(5,10,30),
-                                 pageLength = 50 ,
-                                 deferRender = TRUE,
-                                 scrollY = 450 ,
-                                 scroller = TRUE,
-                                 scrollX = TRUE ,
-                                 fixedColumns = TRUE
-                  ))
-})
+# output$Apriori_all <- renderDataTable({
+#   arules::apriori(tr_all, parameter = list(supp=0.05, conf=0.5,maxlen=4,minlen=1)) %>%
+#     arules::inspect() %>% 
+#     arrange(desc(support)) %>% 
+#     select(lhs,rhs,support,count) %>% 
+#     mutate(support = round(support,4)) %>% 
+#     DT::datatable(extensions = 'Scroller',
+#                   options = list(lengthMenu = c(5,10,30),
+#                                  pageLength = 50 ,
+#                                  deferRender = TRUE,
+#                                  scrollY = 450 ,
+#                                  scroller = TRUE,
+#                                  scrollX = TRUE ,
+#                                  fixedColumns = TRUE
+#                   ))
+# })
 # Apriori_Remove_news
-output$Apriori_Remove_news <- renderDataTable({
-  arules::apriori(tr_Rnews, parameter = list(supp=0.01, conf=0.5,maxlen=5,minlen=1)) %>%
-    arules::inspect() %>% 
-    arrange(desc(support)) %>% 
-    dplyr::select(lhs,rhs,support,count) %>% 
-    DT::datatable(extensions = 'Scroller',
-                  options = list(lengthMenu = c(5,10,30),
-                                 pageLength = 50 ,
-                                 deferRender = TRUE,
-                                 scrollY = 450 ,
-                                 scroller = TRUE,
-                                 scrollX = TRUE ,
-                                 fixedColumns = TRUE
-                  ))
-})
+# output$Apriori_Remove_news <- renderDataTable({
+#   arules::apriori(tr_Rnews, parameter = list(supp=0.01, conf=0.5,maxlen=4,minlen=1)) %>%
+#     arules::inspect() %>% 
+#     arrange(desc(support)) %>% 
+#     dplyr::select(lhs,rhs,support,count) %>% 
+#     DT::datatable(extensions = 'Scroller',
+#                   options = list(lengthMenu = c(5,10,30),
+#                                  pageLength = 50 ,
+#                                  deferRender = TRUE,
+#                                  scrollY = 450 ,
+#                                  scroller = TRUE,
+#                                  scrollX = TRUE ,
+#                                  fixedColumns = TRUE
+#                   ))
+# })
 
 # Apriori_Remove_news_movie
-output$Apriori_Remove_news_movie <- renderDataTable({
-  arules::apriori(tr_RnewsMovie, parameter = list(supp=0.01, conf=0.5,maxlen=5,minlen=1)) %>%
-    arules::inspect() %>% 
-    arrange(desc(support)) %>% 
-    select(lhs,rhs,support,count) %>% 
-    mutate(support = round(support,4)) %>% 
-    DT::datatable(extensions = 'Scroller',
-                  options = list(lengthMenu = c(5,10,30),
-                                 pageLength = 50 ,
-                                 deferRender = TRUE,
-                                 scrollY = 450 ,
-                                 scroller = TRUE,
-                                 scrollX = TRUE ,
-                                 fixedColumns = TRUE
-                  ))
-})
+# output$Apriori_Remove_news_movie <- renderDataTable({
+#   arules::apriori(tr_RnewsMovie, parameter = list(supp=0.01, conf=0.5,maxlen=4,minlen=1)) %>%
+#     arules::inspect() %>% 
+#     arrange(desc(support)) %>% 
+#     select(lhs,rhs,support,count) %>% 
+#     mutate(support = round(support,4)) %>% 
+#     DT::datatable(extensions = 'Scroller',
+#                   options = list(lengthMenu = c(5,10,30),
+#                                  pageLength = 50 ,
+#                                  deferRender = TRUE,
+#                                  scrollY = 450 ,
+#                                  scroller = TRUE,
+#                                  scrollX = TRUE ,
+#                                  fixedColumns = TRUE
+#                   ))
+# })

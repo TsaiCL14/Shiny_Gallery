@@ -1,16 +1,17 @@
 
 TV_Frequency_plotly <- function(TimeZ){
-  Seat <- which(TimeZ[,-1] > 300,arr.ind = T)
-  Problem_names <- names(TimeZ)[-1][unique(Seat[,2])]
-  PlotData_over0 <- TimeZ %>% 
-    as_tibble() %>% 
-    filter(Date > as.POSIXct('2023-06-01 23:00:00',tz = 'UTC')) %>% 
-    filter(Date < as.POSIXct('2023-06-08 00:00:00',tz = 'UTC')) %>% 
-    tidyr::pivot_longer(!Date,names_to = 'mac', values_to = 'druation') %>% 
-    filter(!(mac %in% Problem_names)) %>%
-    filter(druation > 0)
+  # Seat <- which(TimeZ[,-1] > 300,arr.ind = T)
+  # Problem_names <- names(TimeZ)[-1][unique(Seat[,2])]
+  # PlotData_over0 <- TimeZ %>% 
+  #   as_tibble() %>% 
+  #   filter(Date > as.POSIXct('2023-06-01 23:00:00',tz = 'UTC')) %>% 
+  #   filter(Date < as.POSIXct('2023-06-08 00:00:00',tz = 'UTC')) %>% 
+  #   tidyr::pivot_longer(!Date,names_to = 'mac', values_to = 'druation') %>% 
+  #   filter(!(mac %in% Problem_names)) %>%
+  #   filter(druation > 0)
   
-  p <- PlotData_over0 %>%
+  p <- TimeZ %>%
+    # dplyr::mutate(Date = Date - 8*60*60) %>% 
     dplyr::group_by(Date) %>% 
     dplyr::summarise(
       Freq = dplyr::n_distinct(mac)

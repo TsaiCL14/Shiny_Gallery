@@ -5,11 +5,10 @@ TV_choose_plotly <- function(z,Choose_TV){
     dplyr::filter(useName == Choose_TV) %>% 
     dplyr::group_by(開始時間) %>% 
     dplyr::summarise(
-      Freq = dplyr::n_distinct(開始時間)
+      Freq = dplyr::n_distinct(客戶編號)
     ) %>% 
     plotly::plot_ly( x = ~開始時間,type = 'histogram') %>%
     plotly::layout(
-      # title =paste0(Choose_TV),
       title = list(text = paste0(Choose_TV), y = 0.98,
                    font = list(size = 20, weight = 'bold', color = 'black')),
       xaxis = list(

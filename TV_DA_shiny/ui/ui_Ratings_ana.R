@@ -19,7 +19,10 @@ fluidPage(
              selectInput('Choose_TV',
                          '挑選電視台',
                          c('TVBS新聞台(55)'))
-             )
+             )# ,
+         # br(),
+         # br(),
+         # textOutput('bubble_text')
   ), # close column 
   ## 第二欄
   column(10,
@@ -28,23 +31,23 @@ fluidPage(
                                tabPanel('排名及平均觀看時間',
                                         plotOutput('Program_Frequency',height = "600px")),
                                tabPanel('電視台分類差距',
-                                        plotlyOutput('Program_scatter_bubble',height = "600px"))
+                                        plotly::plotlyOutput('Program_scatter_bubble',height = "600px"))
                            ),# close navbarMenu
                     navbarMenu('時間數列圖',
                                tabPanel('觀看次數',
-                                        plotlyOutput('TimeSeries_Frequency',height = "600px")),
+                                        plotly::plotlyOutput('TimeSeries_Frequency',height = "600px")),
                                tabPanel('電視台選擇',
-                                        plotlyOutput('TimeSeries_TV_Choose',height = "600px"))
-                           ),# close navbarMenu 
-                    navbarMenu('關聯分析',
-                               tabPanel('未分類',
-                                        DTOutput('Apriori_all')),
-                               tabPanel('去除新聞台',
-                                        DTOutput('Apriori_Remove_news')),
-                               tabPanel('去除新聞台及電影',
-                                        DTOutput('Apriori_Remove_news_movie'))
-                      
-                    )# close navbarMenu
+                                        plotly::plotlyOutput('TimeSeries_TV_Choose',height = "600px"))
+                           )#,# close navbarMenu 
+                    # navbarMenu('關聯分析',
+                    #            tabPanel('未分類',
+                    #                     DTOutput('Apriori_all')),
+                    #            tabPanel('去除新聞台',
+                    #                     DTOutput('Apriori_Remove_news')),
+                    #            tabPanel('去除新聞台及電影',
+                    #                     DTOutput('Apriori_Remove_news_movie'))
+                    #   
+                    # )# close navbarMenu
                     
                     
          )# navbarPage 
